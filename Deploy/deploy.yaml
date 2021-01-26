@@ -90,8 +90,9 @@ steps:
       inline: |
         $functionAppDeployment="$(funcAppName)-"+"${{parameters.buildNumber}}-deployment"
         $functionMasterKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$functionAppDeployment").Outputs.masterKey.value
-        # $stagingFunctionMasterKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$functionAppDeployment").Outputs.masterKeyStaging.value
+        $stagingFunctionMasterKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$functionAppDeployment").Outputs.masterKeyStaging.value
         echo $functionMasterKey
+        echo $stagingFunctionMasterKey
         Write-Host "##vso[task.setvariable variable=functionMasterKey]$functionMasterKey"
         # Write-Host "##vso[task.setvariable variable=stagingFunctionMasterKey]$stagingFunctionMasterKey"
 

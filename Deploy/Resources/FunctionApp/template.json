@@ -136,6 +136,10 @@
         "masterKey": {
             "type": "string",
             "value": "[listkeys(concat(resourceId(parameters('rgName'), 'Microsoft.Web/sites', parameters('functionAppName')), '/host/default'), '2018-11-01').masterKey]"
+        },
+        "masterKeyStaging": {
+            "type": "string",
+            "value": "[listkeys(concat(resourceId(parameters('rgName'), 'Microsoft.Web/sites/slots', parameters('functionAppName'), 'Staging'), '/host/default'), '2018-11-01').masterKey]"
         }
     }
 }
