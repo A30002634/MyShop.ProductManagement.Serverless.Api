@@ -80,22 +80,6 @@ steps:
         -funcAppName "$(funcAppName)" 
         -environmentName "$(environmentName)"
 
-#  The below two tasks ("Setting up variables to be transformed in configurations" and "Transform configurations" can be used to transform web API configurations)
-  - task: AzurePowerShell@4
-    displayName: "Setting up variables to be transformed in configurations"
-    inputs:
-      azureSubscription: "$(azureSubscription)"
-      scriptType: 'inlineScript' # Optional. Options: filePath, inline
-      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
-      inline: |
-        $functionAppDeployment="$(funcAppName)-"+"${{parameters.buildNumber}}-deployment"
-        $functionMasterKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$functionAppDeployment").Outputs.masterKey.value
-        $stagingFunctionMasterKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$functionAppDeployment").Outputs.masterKeyStaging.value
-        echo $functionMasterKey
-        echo $stagingFunctionMasterKey
-        Write-Host "##vso[task.setvariable variable=functionMasterKey]$functionMasterKey"
-        # Write-Host "##vso[task.setvariable variable=stagingFunctionMasterKey]$stagingFunctionMasterKey"
-
   - task: AzureFunctionApp@1
     displayName: "Deploy Azure Function App to slot"
     inputs:
@@ -116,6 +100,22 @@ steps:
       SpecifySlotOrASE: true
       ResourceGroupName: "$(rgName)"
       Slot: Staging  
+
+#  The below two tasks ("Setting up variables to be transformed in configurations" and "Transform configurations" can be used to transform web API configurations)
+  - task: AzurePowerShell@4
+    displayName: "Setting up variables to be transformed in configurations"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      scriptType: 'inlineScript' # Optional. Options: filePath, inline
+      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+      inline: |
+        $functionAppDeployment="$(funcAppName)-"+"${{parameters.buildNumber}}-deployment"
+        $functionMasterKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$functionAppDeployment").Outputs.masterKey.value
+        $stagingFunctionMasterKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$functionAppDeployment").Outputs.masterKeyStaging.value
+        echo $functionMasterKey
+        echo $stagingFunctionMasterKey
+        Write-Host "##vso[task.setvariable variable=functionMasterKey]$functionMasterKey"
+        # Write-Host "##vso[task.setvariable variable=stagingFunctionMasterKey]$stagingFunctionMasterKey"
 
   - task: AzureAppServiceManage@0
     displayName: 'Swap Slot'
